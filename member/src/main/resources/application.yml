@@ -1,0 +1,12 @@
+spring:
+    application:
+        name: post
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${issuer-uri}
+    config:
+        import:
+            'aws-parameter-store:/cognito/'
+                
