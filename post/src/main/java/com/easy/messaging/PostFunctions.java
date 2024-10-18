@@ -8,11 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.easy.post.dto.PostWriteDto;
-import com.easy.post.dto.Postdto;
-import com.easy.post.service.PostService;
 import com.easy.post.service.ReactivePostService;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Configuration

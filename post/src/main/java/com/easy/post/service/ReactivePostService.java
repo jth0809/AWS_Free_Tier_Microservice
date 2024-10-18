@@ -1,8 +1,5 @@
 package com.easy.post.service;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import com.easy.post.domain.Comment;
 import com.easy.post.domain.Content;
 import com.easy.post.domain.Post;
@@ -19,7 +16,6 @@ public class ReactivePostService {
 
     private final ReactivePostRepository postRepository;
 
-    private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     public ReactivePostService(ReactivePostRepository postRepository) {
         this.postRepository = postRepository;

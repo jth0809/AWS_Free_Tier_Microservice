@@ -1,7 +1,5 @@
 package com.easy.post.service;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.easy.post.repository.PostRepository;
 import com.easy.post.domain.Post;
@@ -20,8 +18,6 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-
-    private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
