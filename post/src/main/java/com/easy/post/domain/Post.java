@@ -16,7 +16,7 @@ public class Post {
     @Id
     private String postId;
 
-    private Long memberId;
+    private String memberId;
     
     private String title;
 

@@ -3,7 +3,8 @@ package com.easy.post.dto;
 
 public record PostWriteDto(
     String postId,
-    Long memberId,
+    String memberId,
+    String commentId,
     String title,
     String content
 ) {}

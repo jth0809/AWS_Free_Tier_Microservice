@@ -8,6 +8,8 @@ import com.easy.member.service.MemberService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -19,47 +21,47 @@ public class MemberController {
     MemberService memberService;
 
     @GetMapping("/member/{memberId}")
-    public Memberdto getMember(@PathVariable long memberId) {
+    public Memberdto getMember(@PathVariable String memberId) {
         return memberService.getMemberInfo(memberId);
     }
     
     @GetMapping("/member/follower/{memberId}")
-    public List<Followdto> getFollower(@PathVariable long memberId) {
+    public List<Followdto> getFollower(@PathVariable String memberId) {
         return memberService.getFollowers(memberId);
     }
 
     @GetMapping("/member/following/{memberId}")
-    public List<Followdto> getFollowing(@PathVariable long memberId) {
+    public List<Followdto> getFollowing(@PathVariable String memberId) {
         return memberService.getFollowings(memberId);
     }
 
     @PostMapping("/member/follow")
-    public void follow(@RequestBody long memberId, @RequestBody long targetId) {
-        memberService.follow(memberId, targetId);
+    public void follow(@RequestBody String targetId) {
+        memberService.follow(targetId);
     }
 
     @PostMapping("/member/unfollow")
-    public void unfollow(@RequestBody long memberId, @RequestBody long targetId) {
-        memberService.unfollow(memberId, targetId);
+    public void unfollow(@RequestBody String targetId) {
+        memberService.unfollow(targetId);
     }
 
     @PostMapping("/member")
-    public void addMember(@RequestBody String name, @RequestBody String email) {
-        memberService.addMember(name, email);
+    public void addMember(@RequestBody Memberdto memberdto) {
+        memberService.addMember(memberdto);
     }
 
-    @PostMapping("/member/{memberId}")
-    public void updateMember(@PathVariable long memberId, @RequestBody String name, @RequestBody String email) {
-        memberService.updateMember(memberId, name, email);
+    @PutMapping("/member")
+    public void updateMember(@RequestBody Memberdto memberdto) {
+        memberService.updateMember(memberdto);
     }
 
-    @PostMapping("/member/{memberId}")
-    public void deleteMember(@PathVariable long memberId) {
-        memberService.deleteMember(memberId);
+    @DeleteMapping("/member")
+    public void deleteMember() {
+        memberService.deleteMember();
     }
 
-    @PostMapping("/member/{memberId}/follower/{followerId}")
-    public void deleteFollower(@PathVariable long memberId, @PathVariable long followerId) {
-        memberService.deleteFollower(memberId, followerId);
+    @PostMapping("/member/follower/{followerId}")
+    public void deleteFollower(@PathVariable String followerId) {
+        memberService.deleteFollower(followerId);
     } 
 }

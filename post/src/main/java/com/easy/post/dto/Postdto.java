@@ -6,7 +6,7 @@ import com.easy.post.domain.Comment;
 
 public record Postdto(
     String postId,
-    Long memberId,
+    String memberId,
     String title,
     String content,
     Long likeCount,

@@ -15,7 +15,7 @@ public class TravelPlan {
     @Column(name = "travel_plan_id")
     private Long id;
 
-    private Long memberId;
+    private String memberId;
 
     private String title;
 

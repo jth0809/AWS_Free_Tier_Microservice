@@ -1,7 +1,5 @@
 package com.easy.location.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +26,4 @@ public class TravelLocation {
     private int travelLocationRating;
 
     private String travelLocationReview;
-
-    @OneToMany(mappedBy = "travelLocation")
-    private List<TravelPlan> travelPlans = new ArrayList<>();
 }

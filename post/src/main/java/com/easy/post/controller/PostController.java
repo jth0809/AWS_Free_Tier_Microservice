@@ -37,18 +37,6 @@ public class PostController {
         postService.addPost(post);
         return "Post added";
     }
-
-    @PostMapping("/post/{postId}/comment")
-    public String addComment(@PathVariable String postId, @RequestBody Long memberId, String comment){
-        postService.addComment(postId, memberId, comment);
-        return "Comment added";
-    }
-    
-    @PostMapping("/post/{postId}/like")
-    public String likePost(@PathVariable String postId, @RequestBody Long memberId){
-        postService.likePost(postId, memberId);
-        return "Post liked";
-    }
     
     @PostMapping("/post/{postId}")
     public String updatePost(@PathVariable String postId, @RequestBody PostWriteDto post){

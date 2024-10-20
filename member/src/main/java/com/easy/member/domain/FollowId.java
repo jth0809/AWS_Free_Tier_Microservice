@@ -17,8 +17,8 @@ import lombok.Setter;
 @Setter
 public class FollowId implements Serializable {
     
-    private Long id;
+    private String id;
 
-    private Long followerId;
+    private String followerId;
 
 }

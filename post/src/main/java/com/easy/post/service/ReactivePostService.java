@@ -68,11 +68,11 @@ public class ReactivePostService {
     }
 
 
-    private Mono<Void> deleteLike(Post post, Long memberId) {
+    private Mono<Void> deleteLike(Post post, String memberId) {
         post.getPostLikes().removeIf(postLike -> postLike.getMemberId().equals(memberId));
         return save(post);
     }
-    private Mono<Void> addLike(Post post, Long memberId) {
+    private Mono<Void> addLike(Post post, String memberId) {
         post.getPostLikes().add(new PostLike(memberId));
         return save(post);
     }
@@ -89,7 +89,7 @@ public class ReactivePostService {
                             });
                 });
     }
-    public Mono<Boolean> isLiked(String postId, Long memberId) {
+    public Mono<Boolean> isLiked(String postId, String memberId) {
         return postRepository.existsByPostIdAndPostLikesMemberId(postId, memberId);
     }
 
@@ -105,7 +105,7 @@ public class ReactivePostService {
         return postRepository.findById(postdto.postId())
                 .flatMap(post -> {
                     post.getComments().stream()
-                            .filter(comment -> comment.getMemberId().equals(postdto.memberId()))
+                            .filter(comment -> comment.getMemberId().equals(postdto.memberId()) && comment.getCommentId().equals(postdto.commentId()))
                             .findFirst()
                             .ifPresent(comment -> comment.setContent(postdto.content()));
                     return save(post);
@@ -114,7 +114,7 @@ public class ReactivePostService {
     public Mono<Void> deleteComment(PostWriteDto postdto) {
         return postRepository.findById(postdto.postId())
                 .flatMap(post -> {
-                    post.getComments().removeIf(comment -> comment.getMemberId().equals(postdto.memberId()));
+                    post.getComments().removeIf(comment -> comment.getMemberId().equals(postdto.memberId()) && comment.getCommentId().equals(postdto.commentId()));
                     return save(post);
                 });
     }

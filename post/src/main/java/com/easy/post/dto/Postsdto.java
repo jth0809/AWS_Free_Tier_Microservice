@@ -2,7 +2,7 @@ package com.easy.post.dto;
 
 public record Postsdto(
     String postId,
-    Long memberId,
+    String memberId,
     String title,
     Long likeCount
 ){}

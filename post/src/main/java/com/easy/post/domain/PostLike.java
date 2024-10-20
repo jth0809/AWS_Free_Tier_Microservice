@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 public class PostLike {
 
-    private Long memberId;
+    private String memberId;
 
-    public PostLike(Long memberId) {
+    public PostLike(String memberId) {
         this.memberId = memberId;
     }
 }

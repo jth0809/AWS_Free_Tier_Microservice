@@ -11,7 +11,5 @@ public class ExchangeRate {
     @Id
     private String currencyCode;
 
-    @ManyToOne
-    @JoinColumn(name = "buget_management_id")
-    private BudgetManagement bugetManagement;
+    private Double rate;
 }

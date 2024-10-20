@@ -69,18 +69,18 @@ public class PostService {
         
         save(post);
     }
-    public void deletePost(String postId, Long memberId) {
+    public void deletePost(String postId, String memberId) {
         postRepository.deleteByPostIdAndMemberId(postId, memberId);
     }
 
 
-    private void deleteLike(Post post, Long memberId) {
+    private void deleteLike(Post post, String memberId) {
         post.getPostLikes().removeIf(postLike -> postLike.getMemberId().equals(memberId));
     }
-    private void addLike(Post post, Long memberId) {
+    private void addLike(Post post, String memberId) {
         post.getPostLikes().add(new PostLike(memberId));
     }
-    public void likePost(String postId, Long memberId) {
+    public void likePost(String postId, String memberId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
     
@@ -91,12 +91,12 @@ public class PostService {
         }
         save(post);
     }
-    public boolean isLiked(String postId, Long memberId) {
+    public boolean isLiked(String postId, String memberId) {
         return postRepository.existsByPostIdAndPostLikesMemberId(postId, memberId);
     }
 
 
-    public void addComment(String postId, Long memberId, String content) {
+    public void addComment(String postId, String memberId, String content) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
         
@@ -104,7 +104,7 @@ public class PostService {
         
         save(post);
     }
-    public void updateComment(String postId, Long memberId, String content) {
+    public void updateComment(String postId, String memberId, String content) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
         
@@ -115,7 +115,7 @@ public class PostService {
         
         save(post);
     }
-    public void deleteComment(String postId, Long memberId) {
+    public void deleteComment(String postId, String memberId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
         
