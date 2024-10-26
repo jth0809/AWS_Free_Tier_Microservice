@@ -10,40 +10,22 @@ import org.springframework.context.annotation.Configuration;
 import com.easy.post.dto.PostWriteDto;
 import com.easy.post.service.ReactivePostService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Configuration
 public class PostFunctions {
     private static final Logger log = LoggerFactory.getLogger(PostFunctions.class);
 
-
-
-
     @Bean
-    public Consumer<Mono<String>> postRead(ReactivePostService reactivePostService) {
-        return postReadMono -> postReadMono
-                .doOnNext(post -> log.info("Received read post request for post: {}", post))
-                .flatMap(reactivePostService::getPost)
-                .subscribe();
-    }
-
-    @Bean
-    public Consumer<Mono<Void>> postsRead(ReactivePostService reactivePostService) {
-        return postsReadMono -> postsReadMono
-                .doOnNext(post -> log.info("Received read posts request"))
-                .flatMapMany(post -> reactivePostService.getPosts())
-                .subscribe();
-    }
-
-    @Bean
-    public Consumer<Mono<PostWriteDto>> postCreate(ReactivePostService reactivePostService) {
+    public Consumer<Flux<PostWriteDto>> postCreate(ReactivePostService reactivePostService) {
         return postWriteDtoFlux -> postWriteDtoFlux
                 .doOnNext(postWriteDto -> log.info("Received new post: {}", postWriteDto))
                 .flatMap(reactivePostService::addPost)
                 .subscribe();
     }
     @Bean
-    public Consumer<Mono<PostWriteDto>> postUpdate(ReactivePostService reactivePostService) {
+    public Consumer<Flux<PostWriteDto>> postUpdate(ReactivePostService reactivePostService) {
         return postUpdateFlux -> postUpdateFlux
                 .doOnNext(postdto -> log.info("Received update post request for post: {}", postdto))
                 .flatMap(reactivePostService::updatePost)
@@ -51,7 +33,7 @@ public class PostFunctions {
     }
 
     @Bean
-    public Consumer<Mono<PostWriteDto>> postDelete(ReactivePostService reactivePostService) {
+    public Consumer<Flux<PostWriteDto>> postDelete(ReactivePostService reactivePostService) {
         return postDeleteFlux -> postDeleteFlux
                 .doOnNext(postId -> log.info("Received delete post request for post: {}", postId))
                 .flatMap(reactivePostService::deletePost)
@@ -59,7 +41,7 @@ public class PostFunctions {
     }
 
     @Bean
-    public Consumer<Mono<PostWriteDto>> commentCreate(ReactivePostService reactivePostService) {
+    public Consumer<Flux<PostWriteDto>> commentCreate(ReactivePostService reactivePostService) {
         return commentCreateFlux -> commentCreateFlux
                 .doOnNext(postdto -> log.info("Received new comment request for post: {}", postdto))
                 .flatMap(reactivePostService::addComment)
@@ -67,7 +49,7 @@ public class PostFunctions {
     }
 
     @Bean
-    public Consumer<Mono<PostWriteDto>> commentUpdate(ReactivePostService reactivePostService) {
+    public Consumer<Flux<PostWriteDto>> commentUpdate(ReactivePostService reactivePostService) {
         return commentUpdateFlux -> commentUpdateFlux
                 .doOnNext(postdto -> log.info("Received update comment request for post: {}", postdto))
                 .flatMap(reactivePostService::updateComment)
@@ -75,7 +57,7 @@ public class PostFunctions {
     }
 
     @Bean
-    public Consumer<Mono<PostWriteDto>> commentDelete(ReactivePostService reactivePostService) {
+    public Consumer<Flux<PostWriteDto>> commentDelete(ReactivePostService reactivePostService) {
         return commentDeleteFlux -> commentDeleteFlux
                 .doOnNext(postdto -> log.info("Received delete comment request for post: {}", postdto))
                 .flatMap(reactivePostService::deleteComment)
@@ -84,9 +66,8 @@ public class PostFunctions {
 
     @Bean
     public Consumer<Mono<PostWriteDto>> likePost(ReactivePostService reactivePostService) {
-        return likePostFlux -> likePostFlux
+        return likePostFlux -> reactivePostService.likePost(likePostFlux)
                 .doOnNext(postdto -> log.info("Received like post request for post: {}", postdto))
-                .flatMap(reactivePostService::likePost)
                 .subscribe();
     }
 }

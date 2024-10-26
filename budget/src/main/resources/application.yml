@@ -9,4 +9,24 @@ spring:
     config:
         import:
             'aws-parameter-store:/cognito/'
-                
+    cloud:
+        stream:
+            bindings:
+                budget-in-0:
+                    destination: budget-write
+                    content-type: application/json
+                    group: ${spring.application.name}
+    rabbitmq:
+        host: ${rabbitmq_host}
+        port: ${rabbitmq_port}
+        username: ${rabbitmq_username}
+        password: ${rabbitmq_password}
+        connection-timeout: 5s
+        listener:
+            simple:
+                retry:
+                    enabled: true
+                    max-attempts: 3
+                    initial-interval: 1000
+                    max-interval: 10000
+                    multiplier: 2

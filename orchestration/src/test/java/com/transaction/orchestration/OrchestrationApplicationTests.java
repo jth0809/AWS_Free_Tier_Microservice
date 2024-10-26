@@ -1,10 +1,13 @@
-package com.easy.post;
+package com.transaction.orchestration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PostApplicationTests {
+class OrchestrationApplicationTests {
 
+	@Test
+	void contextLoads() {
+	}
 
 }

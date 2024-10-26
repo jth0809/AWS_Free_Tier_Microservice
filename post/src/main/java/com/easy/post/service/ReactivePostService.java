@@ -76,18 +76,19 @@ public class ReactivePostService {
         post.getPostLikes().add(new PostLike(memberId));
         return save(post);
     }
-    public Mono<Void> likePost(PostWriteDto postdto) {
-        return postRepository.findById(postdto.postId())
+    public Mono<Void> likePost(Mono<PostWriteDto> postdto) {
+        return postdto
+                .flatMap(postWriteDto -> postRepository.findById(postWriteDto.postId())
                 .flatMap(post -> {
-                    return isLiked(postdto.postId(), postdto.memberId())
+                    return isLiked(postWriteDto.postId(), postWriteDto.memberId())
                             .flatMap(isLiked -> {
-                                if (Boolean.TRUE.equals(isLiked)) {
-                                    return addLike(post, postdto.memberId());
+                                if (Boolean.FALSE.equals(isLiked)) {
+                                    return addLike(post, postWriteDto.memberId());
                                 } else {
-                                    return deleteLike(post, postdto.memberId());
+                                    return deleteLike(post, postWriteDto.memberId());
                                 }
                             });
-                });
+                }));
     }
     public Mono<Boolean> isLiked(String postId, String memberId) {
         return postRepository.existsByPostIdAndPostLikesMemberId(postId, memberId);

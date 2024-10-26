@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.easy.post.domain.Comment;
 
+
 public record Postdto(
     String postId,
     String memberId,

@@ -1,0 +1,115 @@
+spring:
+    config:
+        import:
+            'aws-parameter-store:/'
+    application:
+        name: "edge"
+    cloud:
+        stream:
+            bindings:
+                orchestration-out-0:
+                    destination: post-transaction
+                    content-type: application/json
+        gateway:
+            httpclient:
+                connect-timeout: 2000
+                response-timeout: 5s
+                pool:
+                    type: elastic
+                    max-idle-time: 15s
+                    max-life-time: 60s
+            routes:
+                - id: "post"
+                  uri: ${POST_URL}/post
+                  predicates:
+                      - Path=/post/**
+                - id: "budget"
+                  uri: ${BUDGET_URL}/budget
+                  predicates:
+                      - Path=/budget
+                - id: "plan"
+                  uri: ${PLAN_URL}/plan
+                  predicates:
+                      - Path=/plan
+                - id: "member"
+                  uri: ${MEMBER_URL}/member
+                  predicates:
+                      - Path=/member/**
+            default-filters:
+                - SaveSession
+                - TokenRelay
+                - name: RequestRateLimiter
+                  args:
+                      redis-rate-limiter:
+                      replenishRate: 10
+                      burstCapacity: 20
+                      requestedTokens: 1
+                - name: Retry
+                  args:
+                    retries: 3
+                    methods: GET
+                    series: SERVER_ERROR
+                    exceptions: java.io.IOException, java.util.concurrent.TimeoutException
+                    backoff:
+                        firstBackoff: 50ms
+                        maxBackoff: 500ms
+                        factor: 2
+                        basedOnPreviousValue: false
+    data:
+        redis:
+            connect-timeout: 5s
+            host: ${redis_host}
+            port: ${redis_port}
+            password: ${redis_password}
+            timeout: 1s
+            lettuce:
+                pool:
+                    max-active: 8
+                    max-idle: 8
+                    min-idle: 4
+                    max-wait: 10s
+    session:
+        store-type: redis
+        timeout: 10m
+        redis:
+            namespace: easy:edge
+    security:
+        oauth2:
+            client:
+                registration:
+                    cognito:
+                        client-id: ${aws_client_id}
+                        client-secret: ${aws_client_secret}
+                        provider: aws
+                        scope: openid
+                        redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+                        client-name: Amazon Cognito
+                provider:
+                    cognito:
+                        issuer-uri: ${issuer-uri}
+    rabbitmq:
+        host: ${rabbitmq_host}
+        port: ${rabbitmq_port}
+        username: ${rabbitmq_username}
+        password: ${rabbitmq_password}
+        connection-timeout: 5s
+        listener:
+            simple:
+                retry:
+                    enabled: true
+                    max-attempts: 3
+                    initial-interval: 1000
+                    max-interval: 10000
+                    multiplier: 2
+resilience4j:
+    circuitbreaker:
+        configs:
+            default:
+                slidingWindowSize: 20
+                permittedNumberOfCallsInHalfOpenState: 5
+                failureRateThreshold: 50
+                waitDurationInOpenState: 15000
+    timelimiter:
+        configs:
+            default:
+                timeoutDuration: 5s
