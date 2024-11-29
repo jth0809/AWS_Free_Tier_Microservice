@@ -1,0 +1,18 @@
+FROM bellsoft/liberica-openjre-alpine:17 AS builder
+
+WORKDIR /builder
+
+COPY ./member/build/libs/*.jar app.jar
+
+RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
+
+FROM bellsoft/liberica-openjre-alpine:17
+
+WORKDIR /application
+
+COPY --from=builder /builder/extracted/dependencies/ ./
+COPY --from=builder /builder/extracted/spring-boot-loader/ ./
+COPY --from=builder /builder/extracted/snapshot-dependencies/ ./
+COPY --from=builder /builder/extracted/application/ ./
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -13,7 +13,7 @@ public record Locationdto(
 
     String travelLocationImage,
 
-    int travelLocationRating,
+    Long travelLocationRating,
 
     String travelLocationReview
 ){}

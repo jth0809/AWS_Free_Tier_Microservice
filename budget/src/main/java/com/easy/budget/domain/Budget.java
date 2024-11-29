@@ -1,11 +1,24 @@
 package com.easy.budget.domain;
 
-import jakarta.persistence.Embeddable;
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
-@Embeddable
+@Entity
+@Getter
+@Setter
 public class Budget {
-    private String title;
-    private String description;
-    private List<Double> amount;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String memberId;
+    private String usage;
+    private Long amount;
+    private String time;
+    private String currency;
+    private String date;
 }

@@ -27,19 +27,18 @@ public class MemberService {
         this.followRepository = followRepository;
     }
 
-    private String getMemberId() {
+    private Long getMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();
         if (jwt.getClaim("Id") == null) {
             throw new IllegalArgumentException("unauthorized or invalid token");
         }
-        return jwt.getClaim("Id").toString();
+        return jwt.getClaim("Id");
     }
-    
-    public Memberdto getMemberInfo(String memberId) {
+    @Transactional
+    public Memberdto getMemberInfo(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         return new Memberdto(
-                    member.getId(), 
                     member.getName(), 
                     member.getEmail(), 
                     (long) member.getFollowers().size(), 
@@ -56,7 +55,7 @@ public class MemberService {
 
     @Transactional
     public void updateMember(Memberdto memberdto) {
-        String memberId = getMemberId();
+        Long memberId = getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         if (memberdto.email() != null) member.setEmail(memberdto.email());
         if (memberdto.name() != null ) member.setName(memberdto.name());
@@ -65,14 +64,14 @@ public class MemberService {
 
     @Transactional
     public void deleteMember() {
-        String memberId = getMemberId();
+        Long memberId = getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         memberRepository.delete(member);
     }
 
     @Transactional
-    public void follow(String targetId) {
-        String memberId = getMemberId();
+    public void follow(Long targetId) {
+        Long memberId = getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         Member target = memberRepository.findById(targetId).orElseThrow(() -> new IllegalArgumentException("target not found"));
         if (isFollowing(member, target)) {
@@ -90,8 +89,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void unfollow(String targetId) {
-        String memberId = getMemberId();
+    public void unfollow(Long targetId) {
+        Long memberId = getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         Member target = memberRepository.findById(targetId).orElseThrow(() -> new IllegalArgumentException("target not found"));
         Follow follow = followRepository.findByMemberAndFollower(target, member).orElseThrow(() -> new IllegalArgumentException("follow not found"));
@@ -101,19 +100,19 @@ public class MemberService {
         return followRepository.existsByFollowerAndMember(member, target);
     }
 
-    public List<Followdto> getFollowers(String memberId) {
+    public List<Followdto> getFollowers(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         return member.getFollowers().stream().map(follow -> new Followdto(follow.getFollower().getId(), follow.getFollower().getName())).toList();
     }
-    public List<Followdto> getFollowings(String memberId) {
+    public List<Followdto> getFollowings(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         return member.getFollowings().stream().map(follow -> new Followdto(follow.getMember().getId(), follow.getMember().getName())).toList();
     }
 
     
     @Transactional
-    public void deleteFollower(String followerId) {
-        String memberId = getMemberId();
+    public void deleteFollower(Long followerId) {
+        Long memberId = getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member not found"));
         Member follower = memberRepository.findById(followerId).orElseThrow(() -> new IllegalArgumentException("follower not found"));
         Follow follow = followRepository.findByMemberAndFollower(member, follower).orElseThrow(() -> new IllegalArgumentException("follow not found"));

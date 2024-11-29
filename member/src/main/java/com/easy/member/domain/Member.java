@@ -13,7 +13,8 @@ public class Member {
     
     @Id
     @Column(name = "member_id")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     private String email;
     

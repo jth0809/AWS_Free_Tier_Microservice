@@ -1,6 +1,6 @@
 package com.easy.member.dto;
 
 public record Followdto (
-    String id,
+    Long id,
     String name
 ){}

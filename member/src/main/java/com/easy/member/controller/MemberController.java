@@ -14,34 +14,43 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
 public class MemberController {
     MemberService memberService;
 
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    Memberdto memberdto = new Memberdto( "test1", "test1@naver.com", 0L, 0L);
+    Memberdto memberdto2 = new Memberdto("test2", "test2@naver.com", 0L, 0L);
+
     @GetMapping("/member/{memberId}")
-    public Memberdto getMember(@PathVariable String memberId) {
+    public Memberdto getMember(@PathVariable Long memberId) {
         return memberService.getMemberInfo(memberId);
     }
     
     @GetMapping("/member/follower/{memberId}")
-    public List<Followdto> getFollower(@PathVariable String memberId) {
+    public List<Followdto> getFollower(@PathVariable Long memberId) {
         return memberService.getFollowers(memberId);
     }
 
     @GetMapping("/member/following/{memberId}")
-    public List<Followdto> getFollowing(@PathVariable String memberId) {
+    public List<Followdto> getFollowing(@PathVariable Long memberId) {
         return memberService.getFollowings(memberId);
     }
 
     @PostMapping("/member/follow")
-    public void follow(@RequestBody String targetId) {
+    public void follow(@RequestBody Long targetId) {
         memberService.follow(targetId);
     }
 
     @PostMapping("/member/unfollow")
-    public void unfollow(@RequestBody String targetId) {
+    public void unfollow(@RequestBody Long targetId) {
         memberService.unfollow(targetId);
     }
 
@@ -61,7 +70,15 @@ public class MemberController {
     }
 
     @PostMapping("/member/follower/{followerId}")
-    public void deleteFollower(@PathVariable String followerId) {
+    public void deleteFollower(@PathVariable Long followerId) {
         memberService.deleteFollower(followerId);
-    } 
+    }
+    
+    @GetMapping("/member")
+    public String insertmember() {
+        memberService.addMember(memberdto);
+        memberService.addMember(memberdto2);
+        return "member added";
+    }
+    
 }

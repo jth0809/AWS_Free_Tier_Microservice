@@ -11,9 +11,11 @@ import lombok.Setter;
 @Setter
 public class TravelPlan {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "travel_plan_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String uuid;
 
     private String memberId;
 
@@ -30,4 +32,8 @@ public class TravelPlan {
     @ManyToOne
     @JoinColumn(name = "travel_location_id")
     private TravelLocation travelLocation;
+
+    @ManyToOne
+    @JoinColumn(name = "travel_id")
+    private Travel travel;
 }

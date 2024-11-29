@@ -1,9 +1,18 @@
 package com.easy.post.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Service;
+
 import com.easy.post.domain.Comment;
 import com.easy.post.domain.Content;
 import com.easy.post.domain.Post;
 import com.easy.post.domain.PostLike;
+import com.easy.post.dto.AndroidPost;
 import com.easy.post.dto.PostWriteDto;
 import com.easy.post.dto.Postdto;
 import com.easy.post.dto.Postsdto;
@@ -12,6 +21,7 @@ import com.easy.post.repository.ReactivePostRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Service
 public class ReactivePostService {
 
     private final ReactivePostRepository postRepository;
@@ -20,15 +30,30 @@ public class ReactivePostService {
     public ReactivePostService(ReactivePostRepository postRepository) {
         this.postRepository = postRepository;
     }
-    
-    public Flux<Postsdto> getPosts() {
+
+    public Mono<String> getMemberId() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(securityContext -> {
+                Authentication authentication = securityContext.getAuthentication();
+                if (authentication == null || !(authentication.getPrincipal() instanceof Jwt)) {
+                    throw new IllegalStateException("Authentication not found or is not a JWT");
+                }
+                Jwt jwt = (Jwt) authentication.getPrincipal();
+                return jwt.getClaim("username").toString();
+            })
+            .doOnNext(username -> System.out.println("Extracted username: " + username)); // 디버깅 로그
+    }
+
+    public Mono<List<Postsdto>> getPosts() {
         return postRepository.findAll()
                 .map(post -> new Postsdto(
                         post.getPostId(),
                         post.getMemberId(),
                         post.getTitle(),
+                        post.getContent(),
                         (long) post.getPostLikes().size()
-                ));
+                ))
+                .collect(Collectors.toList());
     }
     public Mono<Postdto> getPost(String postId) {
         return postRepository.findById(postId)
@@ -36,21 +61,25 @@ public class ReactivePostService {
                         p.getPostId(),
                         p.getMemberId(),
                         p.getTitle(),
-                        p.getContent().getContent(),
+                        p.getContent(),
                         (long) p.getPostLikes().size(),
                         false,
                         p.getComments()
                 ));
     }
 
-    public Mono<Void> addPost(PostWriteDto postWriteDto) {
-        Post post = new Post();
-        post.setMemberId(postWriteDto.memberId());
-        post.setTitle(postWriteDto.title());
-        post.setContent(new Content(postWriteDto.content()));
-        
-        return save(post);
+    public Mono<Post> addPost(PostWriteDto postWriteDto) {
+        return getMemberId().flatMap(memberId -> {
+            Post post = new Post();
+            post.setMemberId(memberId);
+            post.setTitle(postWriteDto.title());
+            post.setContent(new Content(postWriteDto.content(), postWriteDto.date()));
+            
+            return postRepository.save(post)
+                    .flatMap(savedPost -> postRepository.findById(savedPost.getPostId()));
+        });
     }
+
     public Mono<Void> updatePost(PostWriteDto postdto) {
         return postRepository.findById(postdto.postId())
                 .flatMap(post -> {
@@ -58,7 +87,7 @@ public class ReactivePostService {
                         return Mono.error(new IllegalArgumentException("Member does not have permission to update this post"));
                     }
                     post.setTitle(postdto.title());
-                    post.setContent(new Content(postdto.content()));
+                    post.setContent(new Content(postdto.content(), postdto.date()));
                     return save(post);
                 });
     }
@@ -98,10 +127,12 @@ public class ReactivePostService {
     public Mono<Void> addComment(PostWriteDto postdto) {
         return postRepository.findById(postdto.postId())
                 .flatMap(post -> {
-                    post.getComments().add(new Comment(postdto.memberId(), postdto.content()));
+                    post.getComments().add(new Comment(null, postdto.memberId(), postdto.content(), postdto.date()));
                     return save(post);
                 });
     }
+
+
     public Mono<Void> updateComment(PostWriteDto postdto) {
         return postRepository.findById(postdto.postId())
                 .flatMap(post -> {

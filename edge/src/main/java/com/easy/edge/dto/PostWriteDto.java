@@ -6,5 +6,6 @@ public record PostWriteDto(
     String memberId,
     String commentId,
     String title,
-    String content
+    String content,
+    String date
 ) {}

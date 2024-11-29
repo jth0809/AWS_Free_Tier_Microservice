@@ -1,3 +1,4 @@
+/*
 package com.easy.post.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,3 +12,4 @@ public interface PostRepository extends MongoRepository<Post, String> {
     void deleteByCommentsMemberId(String memberId);
     void deleteByPostLikesMemberId(String memberId);
 }
+*/

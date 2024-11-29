@@ -1,18 +1,25 @@
+server:
+  port: ${server_port}
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+  shutdown: graceful
 spring:
+    config:
+        import: "optional:configserver:"
     application:
-        name: post
+        name: "plan"
     security:
         oauth2:
             resourceserver:
                 jwt:
                     issuer-uri: ${issuer-uri}
-    config:
-        import:
-            'aws-parameter-store:/'
     cloud:
+        function:
+            definition: planCreate
         stream:
             bindings:
-                plan-in-0:
+                planCreate-in-0:
                     destination: plan-write
                     content-type: application/json
                     group: ${spring.application.name}
@@ -30,3 +37,10 @@ spring:
                     initial-interval: 1000
                     max-interval: 10000
                     multiplier: 2
+    datasource:
+        url: ${POSTGRES_URL}
+        username: ${POSTGRES_USER}
+        password: ${POSTGRES_PASSWORD}
+    jpa:
+        hibernate:
+            ddl-auto: create-drop

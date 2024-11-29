@@ -1,6 +1,7 @@
 package com.easy.post.repository;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+
 import com.easy.post.domain.Post;
 import reactor.core.publisher.Mono;
 

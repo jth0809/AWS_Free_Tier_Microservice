@@ -3,17 +3,19 @@ package com.easy.location.dto;
 import com.easy.location.domain.TravelLocation;
 
 public record Plandto(
-    Long id,
+    String id,
+
+    String memberId,
     
     String title,
 
-    String description,
+    String description, //memo
 
     String startDate,
 
     String endDate,
 
-    String image,
+    String image, //location
 
     TravelLocation travelPlanLocation
 ) {}

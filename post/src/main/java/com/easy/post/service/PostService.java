@@ -1,4 +1,4 @@
-package com.easy.post.service;
+/*package com.easy.post.service;
 
 import org.springframework.stereotype.Service;
 import com.easy.post.repository.PostRepository;
@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-
+    
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
@@ -132,3 +132,4 @@ public class PostService {
     
 
 }
+    */

@@ -1,7 +1,12 @@
+server:
+  port: 8081
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+  shutdown: graceful
 spring:
     config:
-        import:
-            'aws-parameter-store:/'
+        import: "optional:configserver:"
     application:
         name: "edge"
     cloud:
@@ -9,6 +14,9 @@ spring:
             bindings:
                 orchestration-out-0:
                     destination: post-transaction
+                    content-type: application/json
+                postWrite-out-0:
+                    destination: post-write
                     content-type: application/json
         gateway:
             httpclient:
@@ -23,27 +31,36 @@ spring:
                   uri: ${POST_URL}/post
                   predicates:
                       - Path=/post/**
+                      - Method=GET,POST,PUT,DELETE
                 - id: "budget"
                   uri: ${BUDGET_URL}/budget
                   predicates:
-                      - Path=/budget
+                      - Path=/budget/**
+                      - Method=GET,POST,PUT,DELETE
                 - id: "plan"
                   uri: ${PLAN_URL}/plan
                   predicates:
-                      - Path=/plan
+                      - Path=/plan/**
+                      - Method=GET,POST,PUT,DELETE
                 - id: "member"
                   uri: ${MEMBER_URL}/member
                   predicates:
                       - Path=/member/**
+                      - Method=GET
+                - id: "travel"
+                  uri: ${PLAN_URL}/travel
+                  predicates:
+                      - Path=/travel/**
+                      - Method=GET,POST,PUT,DELETE
             default-filters:
                 - SaveSession
                 - TokenRelay
                 - name: RequestRateLimiter
                   args:
                       redis-rate-limiter:
-                      replenishRate: 10
-                      burstCapacity: 20
-                      requestedTokens: 1
+                        replenishRate: 10
+                        burstCapacity: 20
+                        requestedTokens: 1
                 - name: Retry
                   args:
                     retries: 3
@@ -80,9 +97,9 @@ spring:
                     cognito:
                         client-id: ${aws_client_id}
                         client-secret: ${aws_client_secret}
-                        provider: aws
+                        provider: cognito
                         scope: openid
-                        redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+                        redirect-uri: "${base_url}/login/oauth2/code/{registrationId}"
                         client-name: Amazon Cognito
                 provider:
                     cognito:
@@ -113,3 +130,13 @@ resilience4j:
         configs:
             default:
                 timeoutDuration: 5s
+
+logging:
+    level:
+        web: DEBUG
+        security: DEBUG
+        org.springframework.cloud.gateway: DEBUG
+        org.springframework.cloud.gateway.filter: DEBUG
+cognito:
+  logout-url: "https://easytrip.auth.ap-northeast-2.amazoncognito.com/logout"
+  client-id: "${aws_client_id}"
