@@ -15,6 +15,7 @@ pipeline {
                     projects.each { project ->
                         dir(project) {
                             try {
+                                sh 'chmod +x ./gradlew'
                                 // Gradle 빌드 실행
                                 sh './gradlew clean build'
 
