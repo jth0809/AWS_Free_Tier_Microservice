@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:dind'
+            args '--privileged'
+        }
+    }
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker_hub_account'
