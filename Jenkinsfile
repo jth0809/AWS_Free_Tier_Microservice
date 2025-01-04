@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    
+    agent {
+        kubernetes {
+            label 'docker-build-agent'
+            defaultContainer 'docker'
+        }
+    }
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker_hub_account'
