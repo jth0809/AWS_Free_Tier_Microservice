@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.nginx
+      args:
+        TAG: jdh0809/easytrip:nginx
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - "443:443"
