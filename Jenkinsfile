@@ -7,6 +7,14 @@ pipeline {
     }
 
     stages {
+        stage('Install Docker CLI') {
+            steps {
+                script {
+                    // Install Docker CLI if not already installed
+                    sh 'apt-get update && apt-get install -y docker.io'
+                }
+            }
+        }
         stage('Build and Push Docker Images') {
             steps {
                 script {
