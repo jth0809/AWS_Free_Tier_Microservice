@@ -17,7 +17,7 @@ pipeline {
                             try {
                                 sh 'chmod +x ./gradlew'
                                 // Gradle 빌드 실행
-                                sh './gradlew clean build'
+                                sh './gradlew clean build --no-daemon'
 
                                 // Docker 이미지 생성
                                 def dockerfilePath = "dockerfile.${project}"
