@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'docker_hub_account' // Jenkins에 저장된 Docker Hub 자격 증명 ID
-        DOCKER_HUB_REPO = 'jdh0809' // Docker Hub 사용자 이름
+        DOCKER_CREDENTIALS_ID = 'docker_hub_account'
+        DOCKER_HUB_REPO = 'jdh0809'
     }
 
     stages {
@@ -12,23 +12,23 @@ pipeline {
                 script {
                     def projects = ['budget', 'edge', 'location', 'member', 'nginx', 'orchestration', 'post']
 
-                    projects.each { project -> 
+                    projects.each { project ->
                         dir(project) {
                             try {
                                 sh 'chmod +x ./gradlew'
-                                // Gradle 빌드 실행
                                 sh './gradlew clean build --no-daemon'
 
-                                // Docker 이미지 생성 및 푸시
                                 def dockerfilePath = "dockerfile.${project}"
                                 def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
-                                
+
                                 // Docker 빌드
                                 docker.build(imageName, "-f ${dockerfilePath} .")
 
-                                // Docker Hub에 로그인 및 푸시
-                                docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                                    docker.image(imageName).push()
+                                // Docker Hub에 로그인
+                                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                                        docker.image(imageName).push()
+                                    }
                                 }
 
                                 echo "Successfully pushed ${imageName}"
@@ -44,7 +44,6 @@ pipeline {
 
     post {
         always {
-            // Docker 이미지 캐시 정리
             sh 'docker system prune -af'
         }
         success {
