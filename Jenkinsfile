@@ -12,27 +12,25 @@ pipeline {
                 script {
                     def projects = ['budget', 'edge', 'location', 'member', 'nginx', 'orchestration', 'post']
 
-                    projects.each { project ->
+                    projects.each { project -> 
                         dir(project) {
                             try {
                                 sh 'chmod +x ./gradlew'
                                 // Gradle 빌드 실행
                                 sh './gradlew clean build --no-daemon'
 
-                                // Docker 이미지 생성
+                                // Docker 이미지 생성 및 푸시
                                 def dockerfilePath = "dockerfile.${project}"
                                 def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
                                 
                                 // Docker 빌드
-                                sh "docker build -f ${dockerfilePath} -t ${imageName} ."
+                                docker.build(imageName, "-f ${dockerfilePath} .")
 
-                                // Docker Hub에 로그인
-                                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                                    sh 'set +x; echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                                // Docker Hub에 로그인 및 푸시
+                                docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                                    docker.image(imageName).push()
                                 }
 
-                                // Docker 이미지 푸시
-                                sh "docker push ${imageName}"
                                 echo "Successfully pushed ${imageName}"
                             } catch (Exception e) {
                                 echo "Error processing ${project}: ${e.message}"
