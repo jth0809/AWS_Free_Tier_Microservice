@@ -23,8 +23,8 @@ pipeline {
                                 def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
 
                                 container('dind-daemon') {
-                                    sh "ls ../ -al"
                                     sh "cd .."
+                                    sh "ls -al"
                                     docker.build(imageName, "-f ${dockerfilePath} .")
                                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                         docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
