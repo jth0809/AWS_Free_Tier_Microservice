@@ -19,7 +19,7 @@ pipeline {
                                 sh 'chmod +x ./gradlew'
                                 sh './gradlew clean build --no-daemon'
 
-                                def dockerfilePath = "dockerfile.${project}"
+                                def dockerfilePath = "../dockerfile.${project}"
                                 def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
 
                                 container('dind-daemon') {
