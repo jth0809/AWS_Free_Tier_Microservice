@@ -7,6 +7,12 @@ plugins {
 group = 'com.transaction'
 version = '0.0.1-SNAPSHOT'
 
+
+tasks.bootJar {
+    archiveBaseName.set('app')    // JAR 파일 이름
+    archiveVersion.set('')        // 버전 정보 제거
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)

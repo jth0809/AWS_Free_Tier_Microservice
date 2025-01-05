@@ -2,7 +2,7 @@ FROM bellsoft/liberica-openjre-alpine:17 AS builder
 
 WORKDIR /builder
 
-COPY ./budget/build/libs/*.jar app.jar
+COPY ./budget/build/libs/app.jar app.jar
 
 RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
