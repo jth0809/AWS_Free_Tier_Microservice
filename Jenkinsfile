@@ -15,21 +15,24 @@ pipeline {
                     projects.each { project ->
                         dir(project) {
                             try {
-                                container('dind-daemon') {
-                                    sh 'chmod +x ./gradlew'
-                                    sh './gradlew clean build --no-daemon'
+                                sh "ls -al"
+                                sh 'chmod +x ./gradlew'
+                                sh './gradlew clean build --no-daemon'
 
-                                    def dockerfilePath = "../dockerfile.${project}"
-                                    def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
+                                def dockerfilePath = "../dockerfile.${project}"
+                                def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
+
+                                container('dind-daemon') {
                                     sh "ls -al"
                                     docker.build(imageName, "-f ${dockerfilePath} .")
                                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                         docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
                                             docker.image(imageName).push()
                                     }
-                                    echo "Successfully pushed ${imageName}"
                                 }
-                            }
+                }
+
+                                echo "Successfully pushed ${imageName}"
                             } catch (Exception e) {
                                 echo "Error processing ${project}: ${e.message}"
                             }
@@ -42,9 +45,7 @@ pipeline {
 
     post {
         always {
-            container('dind-daemon') {
-                sh 'docker system prune -af'
-            }
+            sh 'docker system prune -af'
         }
         success {
             echo 'All projects have been built and pushed successfully.'
