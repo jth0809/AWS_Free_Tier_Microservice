@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:20.10-dind'  // Docker-in-Docker 이미지 사용
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Docker 소켓을 공유
+        }
+    }
+
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker_hub_account'
