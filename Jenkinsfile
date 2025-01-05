@@ -41,16 +41,16 @@ pipeline {
     }
 
     post {
-        container('dind-daemon') {
-            always {
+        always {
+            container('dind-daemon') {
                 sh 'docker system prune -af'
             }
-            success {
-                echo 'All projects have been built and pushed successfully.'
-            }
-            failure {
-                echo 'One or more projects failed to build or push.'
-            }
+        }
+        success {
+            echo 'All projects have been built and pushed successfully.'
+        }
+        failure {
+            echo 'One or more projects failed to build or push.'
         }
     }
 }
