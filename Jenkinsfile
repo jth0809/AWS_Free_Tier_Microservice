@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'docker_hub_account'
         DOCKER_HUB_REPO = 'jdh0809'
-        DOCKER_HOST = 'tcp://127.0.0.1:2375'
+        DOCKER_HOST = 'tcp://localhost:2375'
     }
 
     stages {
