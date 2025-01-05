@@ -15,7 +15,7 @@ pipeline {
                     projects.each { project ->
                         dir(project) {
                             try {
-                                sh "ls -al"
+                                sh "ls ../ -al"
                                 sh 'chmod +x ./gradlew'
                                 sh './gradlew clean build --no-daemon'
 
@@ -23,7 +23,7 @@ pipeline {
                                 def imageName = "${DOCKER_HUB_REPO}/easytrip:${project}"
 
                                 container('dind-daemon') {
-                                    sh "ls -al"
+                                    sh "ls ../ -al"
                                     docker.build(imageName, "-f ${dockerfilePath} .")
                                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                         docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
