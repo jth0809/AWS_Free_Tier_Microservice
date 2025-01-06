@@ -43,16 +43,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            sh 'docker system prune -af'
-        }
-        success {
-            echo 'All projects have been built and pushed successfully.'
-        }
-        failure {
-            echo 'One or more projects failed to build or push.'
-        }
-    }
 }
