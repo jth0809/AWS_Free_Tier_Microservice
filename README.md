@@ -13,6 +13,7 @@ AWS 프리티어를 통해 단 8시간만 운영되면 되는 서버를 구현 �
 ![구조도](img/service.png)
 
 # 실행방법
+.env 파일 설정이 필요합니다.
 ```bash
    git clone https://github.com/jth0809/AWS_Free_Tier_Microservice.git
    cd AWS_Free_Tier_Microservice

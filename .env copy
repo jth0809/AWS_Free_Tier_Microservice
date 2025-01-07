@@ -1,0 +1,21 @@
+POST_URL=http://post:8085
+BUDGET_URL=http://budget:8080
+PLAN_URL=http://plan:8081
+MEMBER_URL=http://member:8083
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=test
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USERNAME=test
+RABBITMQ_PASSWORD=test
+POSTGRES_URL=jdbc:postgresql://postgres:5432/easytrip
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=1234
+MONGODB_URI=mongodb://root:1234@mongodb:27017
+MONGODB_DATABASE=easytrip
+
+# AWS Cognito Configuration
+ISSUER_URI=
+AWS_CLIENT_ID=
+AWS_CLIENT_SECRET=
