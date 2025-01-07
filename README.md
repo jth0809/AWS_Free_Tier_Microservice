@@ -10,7 +10,7 @@ AWS 프리티어를 통해 단 8시간만 운영되면 되는 서버를 구현 �
 ![구조도](img/AWS_service.png)
 
 
-변경 (Docker-Compose)
+변경 (Docker-Compose)  
 주요기술: Java, Spring Boot, Nginx, Docker, Docker-Compose
 ![구조도](img/service.png)
 # 진행과정
