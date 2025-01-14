@@ -13,6 +13,12 @@ AWS 프리티어를 통해 단 8시간만 운영되면 되는 서버를 구현 �
 주요기술: Java, Spring Boot, Nginx, Docker, Docker-Compose
 ![구조도](img/service.png)
 
+# 작업정보
+## 작업기간
+2024.12 - 2025.01(진행중)
+## 작업인원
+1명
+
 # 실행방법
 .env 파일 설정이 필요합니다.
 ```bash
