@@ -37,6 +37,7 @@ RabbitMQ로 전달된 내용의 검증
 
 # 참고자료
 모바일 데모 동영상:  
+[![Video Label](http://img.youtube.com/vi/J1Fld_Swps8/0.jpg)](https://youtu.be/J1Fld_Swps8)  
 https://youtu.be/J1Fld_Swps8
 
 모바일 프로젝트 Github:  
